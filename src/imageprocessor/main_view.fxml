@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
@@ -37,20 +37,23 @@
                            BorderPane.alignment="CENTER"/>
             </children>
             <BorderPane.margin>
-                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
             </BorderPane.margin>
         </AnchorPane>
     </center>
     <left>
-        <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+        <VBox alignment="TOP_CENTER" prefHeight="355.0" prefWidth="125.0" BorderPane.alignment="CENTER">
             <children>
-                <Button mnemonicParsing="false" onAction="#handleCountColors" prefHeight="25.0" prefWidth="104.0"
-                        text="Zlicz kolory">
+                <Label text="Efekty" textAlignment="CENTER"/>
+                <ChoiceBox fx:id="effectsChoiceBox" disable="true" prefWidth="150.0">
                     <VBox.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                        <Insets bottom="5.0" top="5.0"/>
                     </VBox.margin>
-                </Button>
+                </ChoiceBox>
             </children>
+            <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+            </padding>
         </VBox>
     </left>
     <bottom>

@@ -1,12 +1,16 @@
 package imageprocessor;
 
-import imageprocessor.tasks.CountColorsTask;
+import imageprocessor.effects.Effects;
+import imageprocessor.services.CountColorsService;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
+import javafx.scene.SnapshotParameters;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -29,13 +33,19 @@ public class Controller implements Initializable {
     @FXML
     private Label colorAmountLabel;
 
+    @FXML
+    private ChoiceBox effectsChoiceBox;
+
     private Stage stage;
     private File currentFile;
-    private CountColorsTask countColorsTask = new CountColorsTask();
+    private CountColorsService countColorsService = new CountColorsService();
+
+    private Effects effects;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         configureImageView();
+        configureChoiceBox();
     }
 
     /**
@@ -45,7 +55,7 @@ public class Controller implements Initializable {
      */
     public void setStageAndSetupListeners(Stage stage) {
         this.stage = stage;
-        configureTasks();
+        configureServices();
     }
 
     /**
@@ -93,6 +103,18 @@ public class Controller implements Initializable {
         imageView.setCache(true);
     }
 
+    private void configureChoiceBox() {
+        effects = new Effects();
+        effectsChoiceBox.setItems(effects.getEffectsList());
+        effectsChoiceBox.getSelectionModel().selectFirst();
+        effectsChoiceBox.getSelectionModel().selectedIndexProperty()
+                .addListener((ObservableValue<? extends Number> observable,
+                              Number oldValue, Number newValue) -> {
+                    imageView.setEffect(effects.getEffect(newValue.intValue()));
+                    loadStatisticsInBackground();
+                });
+    }
+
     /**
      * Configure FileChooser types
      *
@@ -115,12 +137,12 @@ public class Controller implements Initializable {
     /**
      * Bind tasks with UI wait cursor
      */
-    private void configureTasks() {
+    private void configureServices() {
         stage.getScene()
                 .getRoot()
                 .cursorProperty()
                 .bind(Bindings
-                        .when(countColorsTask.runningProperty())
+                        .when(countColorsService.runningProperty())
                         .then(Cursor.WAIT)
                         .otherwise(Cursor.DEFAULT)
                 );
@@ -137,15 +159,21 @@ public class Controller implements Initializable {
         this.currentFile = file;
         Image image = new Image(file.toURI().toString());
         imageView.setImage(image);
+
+        unlockControls();
+    }
+
+    private void unlockControls() {
+        effectsChoiceBox.setDisable(false);
     }
 
     /**
      * Count colors amount in background
      */
     private void loadStatisticsInBackground() {
-        countColorsTask.setImageFile(currentFile);
-        countColorsTask.setOnSucceeded((event) -> colorAmountLabel.setText(String.valueOf(countColorsTask.getValue())));
+        countColorsService.setImage(imageView.snapshot(new SnapshotParameters(), null));
+        countColorsService.setOnSucceeded((event) -> colorAmountLabel.setText(String.valueOf(countColorsService.getValue())));
 
-        new Thread(countColorsTask).start();
+        countColorsService.restart();
     }
 }
