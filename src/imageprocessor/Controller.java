@@ -12,9 +12,9 @@ import javafx.scene.Cursor;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -25,7 +25,7 @@ import java.util.ResourceBundle;
 public class Controller implements Initializable {
 
     @FXML
-    private AnchorPane imageViewContainer;
+    private ScrollPane scrollImagePane;
 
     @FXML
     private ImageView imageView;
@@ -44,6 +44,7 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        configureImagePane();
         configureImageView();
         configureChoiceBox();
     }
@@ -92,12 +93,14 @@ public class Controller implements Initializable {
         }
     }
 
+    private void configureImagePane() {
+        scrollImagePane.setStyle("-fx-background-color:transparent;");
+    }
+
     /**
      * Configure base ImageView settings
      */
     private void configureImageView() {
-        imageView.fitWidthProperty().bind(imageViewContainer.widthProperty());
-        imageView.fitHeightProperty().bind(imageViewContainer.heightProperty());
         imageView.setPreserveRatio(true);
         imageView.setSmooth(true);
         imageView.setCache(true);
@@ -128,8 +131,7 @@ public class Controller implements Initializable {
         );
 
         fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("JPG", "*.jpg"),
-                new FileChooser.ExtensionFilter("PNG", "*.png"),
+                new FileChooser.ExtensionFilter("JPG, PNG", "*.jpg", "*.png"),
                 new FileChooser.ExtensionFilter("Wszystkie pliki", "*.*")
         );
     }

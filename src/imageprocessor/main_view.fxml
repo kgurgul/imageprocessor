@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
@@ -29,20 +29,8 @@
             </menus>
         </MenuBar>
     </top>
-    <center>
-        <AnchorPane fx:id="imageViewContainer" BorderPane.alignment="CENTER">
-            <children>
-                <ImageView fx:id="imageView" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0"
-                           AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
-                           BorderPane.alignment="CENTER"/>
-            </children>
-            <BorderPane.margin>
-                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
-            </BorderPane.margin>
-        </AnchorPane>
-    </center>
     <left>
-        <VBox alignment="TOP_CENTER" prefHeight="355.0" prefWidth="125.0" BorderPane.alignment="CENTER">
+        <VBox alignment="TOP_CENTER" prefHeight="355.0" prefWidth="151.0" BorderPane.alignment="CENTER">
             <children>
                 <Label text="Efekty" textAlignment="CENTER"/>
                 <ChoiceBox fx:id="effectsChoiceBox" disable="true" prefWidth="150.0">
@@ -52,7 +40,7 @@
                 </ChoiceBox>
             </children>
             <padding>
-                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                <Insets bottom="5.0" left="10.0" right="10.0" top="5.0"/>
             </padding>
         </VBox>
     </left>
@@ -71,4 +59,11 @@
             </children>
         </HBox>
     </bottom>
+    <center>
+        <ScrollPane fx:id="scrollImagePane" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <content>
+                <ImageView fx:id="imageView" pickOnBounds="true" preserveRatio="true"/>
+            </content>
+        </ScrollPane>
+    </center>
 </BorderPane>
