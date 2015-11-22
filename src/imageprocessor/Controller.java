@@ -7,9 +7,13 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -17,8 +21,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -35,6 +41,9 @@ public class Controller implements Initializable {
 
     @FXML
     private ChoiceBox effectsChoiceBox;
+
+    @FXML
+    private Button colorsChartsButton;
 
     private Stage stage;
     private File currentFile;
@@ -87,9 +96,28 @@ public class Controller implements Initializable {
     /**
      * @param event
      */
-    public void handleCountColors(ActionEvent event) {
+    public void handleColorsCharts(ActionEvent event) {
         if (currentFile != null) {
 
+        }
+    }
+
+    /**
+     * Open info screen
+     *
+     * @param event
+     */
+    public void handleInfoAction(ActionEvent event) {
+        Parent root;
+        try {
+            root = FXMLLoader.load(getClass().getResource("info_view.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("Image processor");
+            stage.setScene(new Scene(root, 600, 400));
+            stage.initStyle(StageStyle.UTILITY);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -165,8 +193,12 @@ public class Controller implements Initializable {
         unlockControls();
     }
 
+    /**
+     * Unlock all functions after loading image
+     */
     private void unlockControls() {
         effectsChoiceBox.setDisable(false);
+        colorsChartsButton.setDisable(false);
     }
 
     /**
