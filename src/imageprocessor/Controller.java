@@ -1,6 +1,7 @@
 package imageprocessor;
 
 import imageprocessor.effects.Effects;
+import imageprocessor.services.ColorsDistributionService;
 import imageprocessor.services.CountColorsService;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -48,6 +49,7 @@ public class Controller implements Initializable {
     private Stage stage;
     private File currentFile;
     private CountColorsService countColorsService = new CountColorsService();
+    private ColorsDistributionService colorsDistributionService = new ColorsDistributionService();
 
     private Effects effects;
 
@@ -97,9 +99,10 @@ public class Controller implements Initializable {
      * @param event
      */
     public void handleColorsCharts(ActionEvent event) {
-        if (currentFile != null) {
+        colorsDistributionService.setImage(imageView.snapshot(new SnapshotParameters(), null));
+        //colorsDistributionService.setOnSucceeded((e) -> colorAmountLabel.setText(String.valueOf(countColorsService.getValue())));
 
-        }
+        colorsDistributionService.restart();
     }
 
     /**
@@ -173,6 +176,15 @@ public class Controller implements Initializable {
                 .cursorProperty()
                 .bind(Bindings
                         .when(countColorsService.runningProperty())
+                        .then(Cursor.WAIT)
+                        .otherwise(Cursor.DEFAULT)
+                );
+
+        stage.getScene()
+                .getRoot()
+                .cursorProperty()
+                .bind(Bindings
+                        .when(colorsDistributionService.runningProperty())
                         .then(Cursor.WAIT)
                         .otherwise(Cursor.DEFAULT)
                 );
