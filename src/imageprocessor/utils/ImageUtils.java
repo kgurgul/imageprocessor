@@ -4,8 +4,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 
 import java.awt.image.BufferedImage;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by kgurgul on 2015-11-15.
@@ -35,5 +34,13 @@ public class ImageUtils {
         int blue = (pixel) & 0xff;
 
         return new int[]{red, green, blue};
+    }
+
+    public static int[] getMostCommonColor(Map<Integer, Integer> map) {
+        List list = new LinkedList(map.entrySet());
+        Collections.sort(list, (o1, o2) -> ((Comparable) ((Map.Entry) (o1)).getValue())
+                .compareTo(((Map.Entry) (o2)).getValue()));
+        Map.Entry me = (Map.Entry) list.get(list.size() - 1);
+        return ImageUtils.getRGBFromInteger((Integer) me.getKey());
     }
 }

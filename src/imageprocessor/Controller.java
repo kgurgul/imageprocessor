@@ -56,6 +56,9 @@ public class Controller implements Initializable {
     @FXML
     private Button colorsChartsButton;
 
+    @FXML
+    private Button mostCommonColorButton;
+
     private Stage stage;
     private File currentFile;
 
@@ -115,6 +118,16 @@ public class Controller implements Initializable {
         colorsDistributionService.setOnSucceeded((e) -> {
             colorsMap = colorsDistributionService.getValue();
             startStageWithChart();
+        });
+
+        colorsDistributionService.restart();
+    }
+
+    public void handleMostCommonColor(ActionEvent event) {
+        colorsDistributionService.setImage(imageView.snapshot(new SnapshotParameters(), null));
+        colorsDistributionService.setOnSucceeded((e) -> {
+            colorsMap = colorsDistributionService.getValue();
+            startStageWithMostCommonColor();
         });
 
         colorsDistributionService.restart();
@@ -226,6 +239,7 @@ public class Controller implements Initializable {
     private void unlockControls() {
         effectsChoiceBox.setDisable(false);
         colorsChartsButton.setDisable(false);
+        mostCommonColorButton.setDisable(false);
     }
 
     /**
@@ -244,7 +258,7 @@ public class Controller implements Initializable {
 
         ListView<ColorAmount> listView = new ListView<>();
         VBox box = new VBox();
-        Scene scene = new Scene(box, 200, 400);
+        Scene scene = new Scene(box, 200, 200);
         Stage stage = new Stage();
         stage.setScene(scene);
         stage.setTitle("Rozkład kolorów");
@@ -254,6 +268,20 @@ public class Controller implements Initializable {
         listView.setItems(colorAmountObservableList);
 
         listView.setCellFactory(list -> new ColorCell());
+
+        stage.show();
+    }
+
+    private void startStageWithMostCommonColor() {
+        Stage stage = new Stage();
+        Pane pane = new Pane();
+        Rectangle rectangle = new Rectangle(200, 200);
+        Scene scene = new Scene(pane, 200, 200);
+        pane.getChildren().add(rectangle);
+        stage.setScene(scene);
+
+        int[] rgb = ImageUtils.getMostCommonColor(colorsMap);
+        rectangle.setFill(Color.rgb(rgb[0], rgb[1], rgb[2]));
 
         stage.show();
     }
@@ -289,13 +317,6 @@ public class Controller implements Initializable {
 
                 setGraphic(hbox);
             }
-
-          /*  Rectangle rect = new Rectangle(20, 20);
-            if (item != null) {
-                int[] rgb = ImageUtils.getRGBFromInteger(item.integerColor);
-                rect.setFill(Color.rgb(rgb[0], rgb[1], rgb[2]));
-                setGraphic(rect);
-            }*/
         }
     }
 }

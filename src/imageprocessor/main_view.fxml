@@ -23,7 +23,7 @@
                 </Menu>
                 <Menu mnemonicParsing="false" text="Pomoc">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="Informacje" onAction="#handleInfoAction"/>
+                        <MenuItem mnemonicParsing="false" onAction="#handleInfoAction" text="Informacje"/>
                     </items>
                 </Menu>
             </menus>
@@ -41,6 +41,12 @@
                 <Label text="Funkcje"/>
                 <Button fx:id="colorsChartsButton" disable="true" mnemonicParsing="false" onAction="#handleColorsCharts"
                         prefWidth="150.0" text="Rozkład kolorów">
+                    <VBox.margin>
+                        <Insets bottom="5.0" top="5.0"/>
+                    </VBox.margin>
+                </Button>
+                <Button fx:id="mostCommonColorButton" disable="true" mnemonicParsing="false"
+                        onAction="#handleMostCommonColor" prefWidth="150.0" text="Kolor dominujący">
                     <VBox.margin>
                         <Insets bottom="5.0" top="5.0"/>
                     </VBox.margin>

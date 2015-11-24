@@ -1,13 +1,14 @@
 package imageprocessor.services;
 
-import imageprocessor.utils.ImageUtils;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 
 import java.awt.image.BufferedImage;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.stream.Stream;
 
 /**
@@ -62,15 +63,6 @@ public class ColorsDistributionService extends Service<Map<Integer, Integer>> {
         m = sortByValue(m);
 
         return m;
-    }
-
-    public String getMostCommonColour(Map map) {
-        List list = new LinkedList(map.entrySet());
-        Collections.sort(list, (o1, o2) -> ((Comparable) ((Map.Entry) (o1)).getValue())
-                .compareTo(((Map.Entry) (o2)).getValue()));
-        Map.Entry me = (Map.Entry) list.get(list.size() - 1);
-        int[] rgb = ImageUtils.getRGBFromInteger((Integer) me.getKey());
-        return Integer.toHexString(rgb[0]) + " " + Integer.toHexString(rgb[1]) + " " + Integer.toHexString(rgb[2]);
     }
 
     public boolean isGray(int[] rgbArr) {
