@@ -1,5 +1,6 @@
 package imageprocessor.services;
 
+import imageprocessor.utils.ImageUtils;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
@@ -46,7 +47,7 @@ public class ColorsDistributionService extends Service<Map<Integer, Integer>> {
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 int rgb = bufferedImage.getRGB(i, j);
-                int[] rgbArr = getRGBArr(rgb);
+                //int[] rgbArr = getRGBArr(rgb);
                 // Filter out grays....
                 //     if (!isGray(rgbArr)) {
                 Integer counter = (Integer) m.get(rgb);
@@ -68,17 +69,8 @@ public class ColorsDistributionService extends Service<Map<Integer, Integer>> {
         Collections.sort(list, (o1, o2) -> ((Comparable) ((Map.Entry) (o1)).getValue())
                 .compareTo(((Map.Entry) (o2)).getValue()));
         Map.Entry me = (Map.Entry) list.get(list.size() - 1);
-        int[] rgb = getRGBArr((Integer) me.getKey());
+        int[] rgb = ImageUtils.getRGBFromInteger((Integer) me.getKey());
         return Integer.toHexString(rgb[0]) + " " + Integer.toHexString(rgb[1]) + " " + Integer.toHexString(rgb[2]);
-    }
-
-    public int[] getRGBArr(int pixel) {
-        int alpha = (pixel >> 24) & 0xff;
-        int red = (pixel >> 16) & 0xff;
-        int green = (pixel >> 8) & 0xff;
-        int blue = (pixel) & 0xff;
-
-        return new int[]{red, green, blue};
     }
 
     public boolean isGray(int[] rgbArr) {

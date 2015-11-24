@@ -1,11 +1,16 @@
 package imageprocessor;
 
 import imageprocessor.effects.Effects;
+import imageprocessor.model.ColorAmount;
 import imageprocessor.services.ColorsDistributionService;
 import imageprocessor.services.CountColorsService;
+import imageprocessor.utils.ImageUtils;
+import imageprocessor.utils.Utils;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -14,12 +19,15 @@ import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -27,6 +35,8 @@ import javafx.stage.StageStyle;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
@@ -48,10 +58,12 @@ public class Controller implements Initializable {
 
     private Stage stage;
     private File currentFile;
+
     private CountColorsService countColorsService = new CountColorsService();
     private ColorsDistributionService colorsDistributionService = new ColorsDistributionService();
 
     private Effects effects;
+    private Map<Integer, Integer> colorsMap;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -100,7 +112,10 @@ public class Controller implements Initializable {
      */
     public void handleColorsCharts(ActionEvent event) {
         colorsDistributionService.setImage(imageView.snapshot(new SnapshotParameters(), null));
-        //colorsDistributionService.setOnSucceeded((e) -> colorAmountLabel.setText(String.valueOf(countColorsService.getValue())));
+        colorsDistributionService.setOnSucceeded((e) -> {
+            colorsMap = colorsDistributionService.getValue();
+            startStageWithChart();
+        });
 
         colorsDistributionService.restart();
     }
@@ -221,5 +236,66 @@ public class Controller implements Initializable {
         countColorsService.setOnSucceeded((event) -> colorAmountLabel.setText(String.valueOf(countColorsService.getValue())));
 
         countColorsService.restart();
+    }
+
+    private void startStageWithChart() {
+        List<ColorAmount> colorAmountList = Utils.convertMapToColorObjects(colorsMap);
+        ObservableList<ColorAmount> colorAmountObservableList = FXCollections.observableArrayList(colorAmountList);
+
+        ListView<ColorAmount> listView = new ListView<>();
+        VBox box = new VBox();
+        Scene scene = new Scene(box, 200, 400);
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.setTitle("Rozkład kolorów");
+        box.getChildren().addAll(listView);
+        VBox.setVgrow(listView, Priority.ALWAYS);
+
+        listView.setItems(colorAmountObservableList);
+
+        listView.setCellFactory(list -> new ColorCell());
+
+        stage.show();
+    }
+
+
+    static class ColorCell extends ListCell<ColorAmount> {
+        HBox hbox = new HBox();
+        Rectangle rectangle = new Rectangle(20, 20);
+        Label label = new Label();
+        Pane pane = new Pane();
+        ColorAmount lastItem;
+
+        public ColorCell() {
+            super();
+            hbox.getChildren().addAll(rectangle, label, pane);
+            HBox.setHgrow(pane, Priority.ALWAYS);
+        }
+
+        @Override
+        protected void updateItem(ColorAmount item, boolean empty) {
+            super.updateItem(item, empty);
+
+            setText(null);  // No text in label of super class
+            if (empty) {
+                lastItem = null;
+                setGraphic(null);
+            } else {
+                lastItem = item;
+
+                int[] rgb = ImageUtils.getRGBFromInteger(item.integerColor);
+                rectangle.setFill(Color.rgb(rgb[0], rgb[1], rgb[2]));
+                label.setText(" - " + item.amount);
+
+                setGraphic(hbox);
+            }
+
+          /*  Rectangle rect = new Rectangle(20, 20);
+            if (item != null) {
+                int[] rgb = ImageUtils.getRGBFromInteger(item.integerColor);
+                rect.setFill(Color.rgb(rgb[0], rgb[1], rgb[2]));
+                setGraphic(rect);
+            }*/
+        }
     }
 }
