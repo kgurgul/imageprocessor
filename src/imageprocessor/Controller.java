@@ -192,6 +192,7 @@ public class Controller implements Initializable {
 
     private void configureImagePane() {
         scrollImagePane.setStyle("-fx-background-color:transparent;");
+        //scrollImagePane.setStyle("-fx-focus-color: transparent; -fx-faint-focus-color: transparent;");
     }
 
     /**
@@ -201,6 +202,11 @@ public class Controller implements Initializable {
         imageView.setPreserveRatio(true);
         imageView.setSmooth(true);
         imageView.setCache(true);
+        imageView.setImage(new Image("image_placeholder.png"));
+/*        imageView.translateXProperty().bind(scrollImagePane.widthProperty().subtract(imageView.getBoundsInParent().getWidth()).divide(2));
+        imageView.translateYProperty().bind(scrollImagePane.heightProperty().subtract(imageView.getBoundsInParent().getHeight()).divide(2));*/
+        imageView.setTranslateX(180);
+        imageView.setTranslateY(150);
     }
 
     private void configureChoiceBox() {
@@ -266,6 +272,8 @@ public class Controller implements Initializable {
 
         this.currentFile = file;
         Image image = new Image(file.toURI().toString());
+        imageView.setTranslateX(0);
+        imageView.setTranslateY(0);
         imageView.setImage(image);
 
         unlockControls();
