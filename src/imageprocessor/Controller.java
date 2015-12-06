@@ -1,6 +1,7 @@
 package imageprocessor;
 
 import imageprocessor.effects.Effects;
+import imageprocessor.effects.ImageHistogram;
 import imageprocessor.model.ColorAmount;
 import imageprocessor.services.ColorsDistributionService;
 import imageprocessor.services.CountColorsService;
@@ -19,6 +20,9 @@ import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -58,6 +62,9 @@ public class Controller implements Initializable {
 
     @FXML
     private Button mostCommonColorButton;
+
+    @FXML
+    private Button histogramButton;
 
     private Stage stage;
     private File currentFile;
@@ -131,6 +138,37 @@ public class Controller implements Initializable {
         });
 
         colorsDistributionService.restart();
+    }
+
+    public void handleHistogram(ActionEvent event) {
+        Stage stage = new Stage();
+        Pane pane = new Pane();
+        Scene scene = new Scene(pane, 550, 400);
+        scene.getStylesheets().add("charts.css");
+
+        // Create chart
+        final CategoryAxis xAxis = new CategoryAxis();
+        final NumberAxis yAxis = new NumberAxis();
+        final LineChart<String, Number> chartHistogram
+                = new LineChart<>(xAxis, yAxis);
+        chartHistogram.setCreateSymbols(false);
+
+        chartHistogram.getData().clear();
+
+        ImageHistogram imageHistogram = new ImageHistogram(imageView.snapshot(new SnapshotParameters(), null));
+        if (imageHistogram.isSuccess()) {
+            chartHistogram.getData().addAll(
+                    // imageHistogram.getSeriesAlpha(),
+                    imageHistogram.getSeriesRed(),
+                    imageHistogram.getSeriesGreen(),
+                    imageHistogram.getSeriesBlue());
+        }
+
+        pane.getChildren().add(chartHistogram);
+        stage.setScene(scene);
+        stage.setTitle("Histogram");
+        stage.setResizable(false);
+        stage.show();
     }
 
     /**
@@ -240,6 +278,7 @@ public class Controller implements Initializable {
         effectsChoiceBox.setDisable(false);
         colorsChartsButton.setDisable(false);
         mostCommonColorButton.setDisable(false);
+        histogramButton.setDisable(false);
     }
 
     /**
