@@ -45,6 +45,12 @@
                         <Insets bottom="5.0" top="5.0"/>
                     </VBox.margin>
                 </Button>
+                <Button fx:id="barChartButton" disable="true" mnemonicParsing="false" onAction="#handleColorsBarChart"
+                        prefWidth="150.0" text="Wykres kolorów">
+                    <VBox.margin>
+                        <Insets bottom="5.0" top="5.0"/>
+                    </VBox.margin>
+                </Button>
                 <Button fx:id="mostCommonColorButton" disable="true" mnemonicParsing="false"
                         onAction="#handleMostCommonColor" prefWidth="150.0" text="Kolor dominujący">
                     <VBox.margin>

@@ -20,9 +20,7 @@ import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -45,6 +43,8 @@ import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
 
+    private static final int MAX_CHART_BARS = 300;
+
     @FXML
     private ScrollPane scrollImagePane;
 
@@ -65,6 +65,9 @@ public class Controller implements Initializable {
 
     @FXML
     private Button histogramButton;
+
+    @FXML
+    private Button barChartButton;
 
     private Stage stage;
     private File currentFile;
@@ -128,6 +131,51 @@ public class Controller implements Initializable {
         });
 
         colorsDistributionService.restart();
+    }
+
+    public void handleColorsBarChart(ActionEvent event) {
+        colorsDistributionService.setImage(imageView.snapshot(new SnapshotParameters(), null));
+        colorsDistributionService.setOnSucceeded((e) -> {
+            colorsMap = colorsDistributionService.getValue();
+            startStageWithBarChart();
+        });
+
+        colorsDistributionService.restart();
+    }
+
+    private void startStageWithBarChart() {
+        Stage stage = new Stage();
+        Pane pane = new Pane();
+        Scene scene = new Scene(pane, 550, 400);
+
+        // Create chart
+        final CategoryAxis xAxis = new CategoryAxis();
+        final NumberAxis yAxis = new NumberAxis();
+        final BarChart<String, Number> bc
+                = new BarChart<>(xAxis, yAxis);
+        xAxis.setLabel("Kolory");
+        yAxis.setLabel("Ilość pikseli");
+        bc.setLegendVisible(false);
+
+        bc.getData().clear();
+        XYChart.Series<String, Number> seriesPixels = new XYChart.Series<>();
+        List<ColorAmount> colorAmountList = Utils.convertMapToColorObjects(colorsMap);
+        for (int i = 0; i < colorAmountList.size(); i++) {
+            if (i < MAX_CHART_BARS) {
+                ColorAmount ca = colorAmountList.get(i);
+                seriesPixels.getData().add(new XYChart.Data<>(String.valueOf(ca.integerColor), ca.amount));
+            } else {
+                break;
+            }
+        }
+
+        bc.getData().add(seriesPixels);
+
+        pane.getChildren().add(bc);
+        stage.setScene(scene);
+        stage.setTitle("Rozkład kolorów");
+        stage.setResizable(false);
+        stage.show();
     }
 
     public void handleMostCommonColor(ActionEvent event) {
@@ -287,6 +335,7 @@ public class Controller implements Initializable {
         colorsChartsButton.setDisable(false);
         mostCommonColorButton.setDisable(false);
         histogramButton.setDisable(false);
+        barChartButton.setDisable(false);
     }
 
     /**
