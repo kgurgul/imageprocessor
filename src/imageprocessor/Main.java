@@ -25,8 +25,8 @@ public class Main extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("main_view.fxml"));
         Parent root = loader.load();
         primaryStage.setTitle("Image processor");
-        primaryStage.setScene(new Scene(root, 1024, 800));
-        primaryStage.setResizable(false);
+        primaryStage.setScene(new Scene(root, 800, 600));
+        //primaryStage.setResizable(false);
         primaryStage.show();
 
         Controller controller = loader.getController();
